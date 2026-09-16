@@ -19,7 +19,9 @@ Aplikacja startuje na `http://localhost:3000`. Bez `.env.local` uruchomi się i 
 ## Wymagania po stronie zaplecza
 
 1. Qdrant z kolekcją o **wymiarze 1024** (model `baai/bge-m3`) — instrukcja w [docs/n8n/README.md](docs/n8n/README.md).
-2. Dwa aktywne workflow n8n — kontrakt w [docs/n8n-contract.md](docs/n8n-contract.md).
+2. Aktywne workflow n8n — kontrakt w [docs/n8n-contract.md](docs/n8n-contract.md). Stan:
+   - **czat** ✅ zweryfikowany end-to-end (odpowiedź z bazy wiedzy, pamięć rozmowy, brak konfabulacji),
+   - **wsad** ⚠️ obsługiwany w n8n przez formularz (Form Trigger), nie przez webhook — wsad z poziomu aplikacji zadziała dopiero po dorobieniu workflow z węzłem Webhook na ścieżce `rag-ingest`.
 3. Opcjonalnie: skoroszyt Google Sheets z 4 zakładkami i konto serwisowe z prawem edycji. Bez tego wsad, czat i migawki w tle działają, a każdy pomiar jest po prostu oznaczany jako niezapisany — historia, czat i wykresy pokażą wtedy komunikat "Sheets nie jest skonfigurowany".
 
 ### Zakładanie Google Sheets
