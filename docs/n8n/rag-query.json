@@ -91,7 +91,7 @@
         "toolDescription": "Przeszukuje baze wiedzy zbudowana z dokumentow wgranych przez operatora. Uzyj do kazdego pytania merytorycznego.",
         "qdrantCollection": {
           "__rl": true,
-          "value": "rag_docs",
+          "value": "ragdcs",
           "mode": "id"
         },
         "topK": 5,

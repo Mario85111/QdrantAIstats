@@ -24,7 +24,7 @@ Qdrant stoi na VPS z publicznym IP i **domyślnie startuje bez uwierzytelniania*
 Model embeddingów to `baai/bge-m3` → **1024 wymiary**. Kolekcja musi mieć dokładnie tyle. Niezgodność wymiaru to najczęstsza przyczyna sytuacji „działa, ale nic nie znajduje".
 
 ```bash
-curl -X PUT "https://TWOJ-VPS:6333/collections/rag_docs" \
+curl -X PUT "https://TWOJ-VPS:6333/collections/ragdcs" \
   -H "api-key: TWOJ_KLUCZ_QDRANT" \
   -H "Content-Type: application/json" \
   -d '{"vectors":{"size":1024,"distance":"Cosine"}}'
@@ -47,7 +47,7 @@ Jeśli zmienisz model embeddingów na inny, kolekcję trzeba **utworzyć od nowa
 W obu workflow:
 
 - [ ] Każdy węzeł z żółtym trójkątem → wybierz credential z listy.
-- [ ] Nazwa kolekcji w węzłach Qdranta: domyślnie `rag_docs` — podmień, jeśli masz inną.
+- [ ] Nazwa kolekcji w węzłach Qdranta: domyślnie `ragdcs` — podmień, jeśli masz inną.
 - [ ] `rag-query` → węzeł **Model czatu (OpenRouter)**: domyślnie `deepseek/deepseek-flash-latest`. To parametr, nie decyzja na zawsze — przetestuj 2–3 modele pod kątem polszczyzny i zostaw najlepszy. [DO WERYFIKACJI: aktualny katalog i ceny na openrouter.ai/models]
 - [ ] Zapisz oba workflow i **aktywuj** (webhook produkcyjny działa dopiero po aktywacji; przed aktywacją działa wyłącznie adres testowy).
 - [ ] Skopiuj oba adresy produkcyjne webhooków → wpisz do `.env.local` aplikacji jako `INGEST_WEBHOOK_URL` i `CHAT_WEBHOOK_URL`.
@@ -68,7 +68,7 @@ W obu workflow:
    Oczekiwane: `{"status":"done","chunks":N,...}` i zielona ścieżka na kanwie.
 2. **Sprawdź Qdranta niezależnie od n8n** — to samo zapytanie, którego będzie używać aplikacja:
    ```bash
-   curl -H "api-key: TWOJ_KLUCZ_QDRANT" "https://TWOJ-VPS:6333/collections/rag_docs"
+   curl -H "api-key: TWOJ_KLUCZ_QDRANT" "https://TWOJ-VPS:6333/collections/ragdcs"
    ```
    Oczekiwane: `points_count` większe od zera i równe liczbie chunków z kroku 1.
 3. **Ingest, plik PDF.** Ta sama komenda z PDF-em. Jeśli wróci `reason: no_text` — to skan bez warstwy tekstowej, zachowanie poprawne.

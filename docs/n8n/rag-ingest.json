@@ -278,7 +278,7 @@
         "mode": "insert",
         "qdrantCollection": {
           "__rl": true,
-          "value": "rag_docs",
+          "value": "ragdcs",
           "mode": "id"
         },
         "options": {}
