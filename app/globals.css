@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+:root {
+  --background: #08090a;
+  --surface: #101315;
+  --surface-raised: #151a1d;
+  --border: #23292d;
+  --border-strong: #333b40;
+  --foreground: #e7ecee;
+  --muted: #838f96;
+  --accent: #dc244c;
+  --ok: #2fbf71;
+  --warn: #e0a33e;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Siatka tła — dyskretna, techniczna, bez ozdobnika. */
+.grid-backdrop {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}

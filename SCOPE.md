@@ -67,7 +67,7 @@ Given uruchomioną aplikację, when minie interwał 15 minut, then aplikacja zap
 
 | warstwa | decyzja |
 |---|---|
-| Frontend + backend | Next.js 15, App Router, TypeScript, jeden projekt (route handlers jako BFF) |
+| Frontend + backend | Next.js 16.3.5, App Router, TypeScript, jeden projekt (route handlers jako BFF) — SCOPE zakładał 15, `create-next-app` zainstalował 16.3.5 jako wersję bieżącą; zmiana przyjęta przy M0 |
 | Style | Tailwind CSS v4 |
 | Wykresy | Recharts |
 | Magazyn pomiarów (historia, czasy, migawki) | Google Sheets, jeden skoroszyt, 4 zakładki; zapis i odczyt przez `googleapis` (Sheets API v4) |
