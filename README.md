@@ -4,7 +4,7 @@ Interfejs operacyjny nad własnym środowiskiem testowym wiedzy: wsad dokumentó
 
 Łańcuch artefaktów: [intent](intent/2026-09-15-brak-wgladu-w-srodowisko-testowe-rag.md) → [SCOPE.md](SCOPE.md) → [workflow n8n](docs/n8n/README.md) → kod.
 
-**Stan: M0** — szkielet end-to-end. Działa wsad pliku i odczyt stanu kolekcji. Czat, historia i wykresy (M-2…M-6) są w M1.
+**Stan: M1** — wszystkie MUST ze SCOPE.md zaimplementowane: wsad pliku (M-1), historia wsadów (M-2), czat z pomiarem czasu (M-3), panel stanu kolekcji (M-4), wykresy (M-5), migawki w tle co 15 min (M-6).
 
 ## Uruchomienie
 
@@ -20,7 +20,25 @@ Aplikacja startuje na `http://localhost:3000`. Bez `.env.local` uruchomi się i 
 
 1. Qdrant z kolekcją o **wymiarze 1024** (model `baai/bge-m3`) — instrukcja w [docs/n8n/README.md](docs/n8n/README.md).
 2. Dwa aktywne workflow n8n — kontrakt w [docs/n8n-contract.md](docs/n8n-contract.md).
-3. Opcjonalnie: skoroszyt Google Sheets z zakładką `ingest_jobs` i konto serwisowe z prawem edycji. Bez tego wsad działa, a pomiar oznaczany jest jako niezapisany.
+3. Opcjonalnie: skoroszyt Google Sheets z 4 zakładkami i konto serwisowe z prawem edycji. Bez tego wsad, czat i migawki w tle działają, a każdy pomiar jest po prostu oznaczany jako niezapisany — historia, czat i wykresy pokażą wtedy komunikat "Sheets nie jest skonfigurowany".
+
+### Zakładanie Google Sheets
+
+1. Utwórz nowy skoroszyt Google Sheets.
+2. Dodaj 4 zakładki z **dokładnie takimi nazwami i nagłówkami w pierwszym wierszu** (kolejność kolumn ma znaczenie — kod czyta po indeksie, nie po nazwie nagłówka):
+
+   | zakładka | nagłówki (wiersz 1) |
+   |---|---|
+   | `ingest_jobs` | `id, filename, size_bytes, started_at, finished_at, status, error_message, n8n_execution_id, points_before, points_after` |
+   | `conversations` | `id, started_at, title` |
+   | `chat_messages` | `id, conversation_id, role, content, created_at, ttfb_ms, total_ms, error_message` |
+   | `collection_snapshots` | `id, taken_at, points_count, segments_count, status, reachable` |
+
+3. Załóż konto serwisowe w Google Cloud (projekt z włączonym Sheets API) i pobierz plik klucza JSON. Trzymaj go **poza katalogiem projektu**.
+4. Udostępnij skoroszyt na adres e-mail konta serwisowego (widoczny w pliku klucza, pole `client_email`) z prawem **edycji**.
+5. Wpisz w `.env.local`: `GOOGLE_SHEETS_ID` (z adresu URL skoroszytu) i `GOOGLE_SERVICE_ACCOUNT_JSON` (ścieżka do pliku klucza).
+
+Pełny opis schematu: [SCOPE.md, sekcja 5](SCOPE.md#5-model-danych-google-sheets--jedna-zakładka--jedna-encja).
 
 ## Zasady, które trzymają ten projekt
 

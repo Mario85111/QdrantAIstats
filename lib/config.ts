@@ -53,4 +53,8 @@ export const config = {
   maxUploadBytes: 50 * 1024 * 1024,
   /** Timeout wsadu z M-1. Po nim status to `błąd: timeout`, nigdy `w toku`. */
   ingestTimeoutMs: 120_000,
+  /** Timeout pojedynczej odpowiedzi czatu (M-3). */
+  chatTimeoutMs: 60_000,
+  /** Co ile aplikacja odpytuje Qdranta w tle (M-6). Wyłącznie REST, nigdy LLM — SCOPE R-3. */
+  snapshotIntervalMs: 15 * 60_000,
 } as const;

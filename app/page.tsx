@@ -3,31 +3,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { CollectionState } from "@/lib/qdrant";
 import type { IngestResponse } from "@/app/api/ingest/route";
+import { formatClock, formatNumber } from "@/lib/format";
+import IngestHistory from "@/components/IngestHistory";
+import Chat from "@/components/Chat";
+import StatsCharts from "@/components/StatsCharts";
 
 type IngestState =
   | { phase: "idle" }
   | { phase: "running"; filename: string; startedAt: number }
   | { phase: "finished"; result: IngestResponse };
-
-function formatNumber(value: number | null): string {
-  if (value === null) return "—";
-  return new Intl.NumberFormat("pl-PL").format(value);
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} kB`;
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
-}
-
-function formatClock(iso: string | null): string {
-  if (!iso) return "—";
-  return new Date(iso).toLocaleTimeString("pl-PL", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-}
 
 export default function Home() {
   const [collection, setCollection] = useState<CollectionState | null>(null);
@@ -35,6 +19,7 @@ export default function Home() {
   const [ingest, setIngest] = useState<IngestState>({ phase: "idle" });
   const [elapsed, setElapsed] = useState(0);
   const [dragging, setDragging] = useState(false);
+  const [historyKey, setHistoryKey] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const refreshCollection = useCallback(async () => {
@@ -89,6 +74,7 @@ export default function Home() {
         });
       }
       void refreshCollection();
+      setHistoryKey((k) => k + 1);
     },
     [refreshCollection]
   );
@@ -183,11 +169,28 @@ export default function Home() {
         )}
 
         {ingest.phase === "finished" && <Result result={ingest.result} />}
+
+        <div className="mt-8">
+          <h3 className="mb-3 font-mono text-xs uppercase tracking-widest text-muted">
+            Historia wsadów
+          </h3>
+          <IngestHistory refreshKey={historyKey} />
+        </div>
+      </section>
+
+      <section className="mt-14">
+        <h2 className="mb-3 font-mono text-xs uppercase tracking-widest text-muted">Czat</h2>
+        <Chat />
+      </section>
+
+      <section className="mt-14">
+        <h2 className="mb-3 font-mono text-xs uppercase tracking-widest text-muted">Statystyki</h2>
+        <StatsCharts />
       </section>
 
       <footer className="mt-16 border-t border-border pt-4 font-mono text-[11px] leading-relaxed text-muted">
-        M0 — szkielet end-to-end. Status wsadu potwierdzany wzrostem liczby punktów w Qdrancie,
-        nie odpowiedzią HTTP z n8n.
+        Status wsadu potwierdzany wzrostem liczby punktów w Qdrancie, nie odpowiedzią HTTP z n8n.
+        Migawki w tle odpytują wyłącznie Qdranta — nigdy nie wywołują modelu.
       </footer>
     </main>
   );
