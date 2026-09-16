@@ -1,0 +1,29 @@
+# === SEKRETY — NIGDY DO REPO (repozytorium jest publiczne) ===
+.env
+.env.*
+!.env.example
+*service-account*.json
+*credentials*.json
+secrets/
+
+# zależności
+node_modules/
+.pnp
+.pnp.*
+
+# build
+.next/
+out/
+build/
+dist/
+
+# środowisko
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+
+# narzędzia
+.vercel
+*.tsbuildinfo
+next-env.d.ts
