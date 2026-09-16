@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "QdrantAIstats",
+  title: "HydrantStats",
   description: "Stan środowiska testowego wiedzy: wsad dokumentów i kondycja zasobu wektorowego.",
 };
 

@@ -84,7 +84,7 @@ export default function Home() {
       <header className="mb-10 flex items-baseline justify-between border-b border-border pb-5">
         <div>
           <h1 className="font-mono text-lg tracking-tight">
-            Qdrant<span className="text-accent">AI</span>stats
+            Hy<span className="text-accent">drant</span>Stats
           </h1>
           <p className="mt-1 text-sm text-muted">Stan środowiska testowego wiedzy</p>
         </div>

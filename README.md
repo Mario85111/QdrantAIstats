@@ -1,4 +1,4 @@
-# QdrantAIstats
+# HydrantStats
 
 Interfejs operacyjny nad własnym środowiskiem testowym wiedzy: wsad dokumentów, czat z agentem i odczyt kondycji zasobu wektorowego — bez wchodzenia do n8n i Qdranta.
 

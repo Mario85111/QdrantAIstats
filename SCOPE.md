@@ -1,4 +1,4 @@
-# QdrantAIstats — SCOPE
+# HydrantStats — SCOPE
 
 Wsad: [intent/2026-09-15-brak-wgladu-w-srodowisko-testowe-rag.md](intent/2026-09-15-brak-wgladu-w-srodowisko-testowe-rag.md)
 Konsument briefu: agent AI (Claude Code). Data: 2026-09-15. Status: draft.
