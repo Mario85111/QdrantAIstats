@@ -21,7 +21,7 @@ Druga rola nie powstaje. Aplikacja nasłuchuje wyłącznie na `127.0.0.1` — br
 
 ## 3. ZAKRES (MoSCoW)
 
-### MUST (MVP) — 6 funkcji
+### MUST (MVP) — 7 funkcji
 
 **M-1 | Wsad pliku z jawnym statusem**
 Given uruchomioną aplikację, when operator przeciągnie plik na pole wsadu, then plik trafia POST-em na webhook ingest w n8n, a interfejs pokazuje jeden z trzech stanów: `w toku` / `w zasobie` / `błąd + treść błędu`. Stan `w toku` nigdy nie jest stanem końcowym — po przekroczeniu timeoutu (120 s) przechodzi w `błąd: timeout`.
@@ -40,6 +40,10 @@ Given min. 2 pomiary, when operator otworzy widok statystyk, then widzi dwa wykr
 
 **M-6 | Migawka stanu kolekcji w tle**
 Given uruchomioną aplikację, when minie interwał 15 minut, then aplikacja zapisuje migawkę stanu kolekcji (liczba punktów, status) do bazy lokalnej. Odpytywanie jest wyłącznie odczytem Qdranta — **nigdy nie wywołuje modelu LLM** (patrz ryzyko R-3).
+
+**M-7 | Reset zasobu do czystego stanu**
+Given kolekcję z punktami, when operator kliknie "Wyczyść zasób" i potwierdzi w modalu pokazującym dokładną liczbę punktów do usunięcia, then aplikacja kasuje wszystkie punkty z bieżącej kolekcji (konfiguracja, wymiar wektora — bez zmian) i odświeża panel. Akcja nieodwracalna, bez drugiego potwierdzenia poza modalem — środowisko testowe, dane odtwarzalne ponownym wsadem. Przycisk wyłączony, gdy Qdrant nieosiągalny albo kolekcja pusta.
+*Nie jest to obsługa wielu kolekcji (WON'T #4) — to czyszczenie zawartości jednej, tej samej kolekcji, żeby kolejny eksperyment startował z zerowym punktem odniesienia.*
 
 ### SHOULD (po MVP)
 - Podgląd źródeł (chunków) użytych w ostatniej odpowiedzi agenta.

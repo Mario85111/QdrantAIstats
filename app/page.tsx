@@ -20,6 +20,8 @@ export default function Home() {
   const [elapsed, setElapsed] = useState(0);
   const [dragging, setDragging] = useState(false);
   const [historyKey, setHistoryKey] = useState(0);
+  const [wipeState, setWipeState] = useState<"idle" | "confirm" | "busy" | "error">("idle");
+  const [wipeError, setWipeError] = useState<string | undefined>();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const refreshCollection = useCallback(async () => {
@@ -79,6 +81,25 @@ export default function Home() {
     [refreshCollection]
   );
 
+  const wipeCollection = useCallback(async () => {
+    setWipeState("busy");
+    try {
+      const res = await fetch("/api/collection/wipe", { method: "POST" });
+      const result: { ok: boolean; error?: string } = await res.json();
+      if (!result.ok) {
+        setWipeError(result.error ?? "Nieznany błąd");
+        setWipeState("error");
+        return;
+      }
+      setWipeState("idle");
+      void refreshCollection();
+      setHistoryKey((k) => k + 1);
+    } catch (err) {
+      setWipeError(err instanceof Error ? err.message : "Błąd sieci");
+      setWipeState("error");
+    }
+  }, [refreshCollection]);
+
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
       <header className="mb-10 flex items-baseline justify-between border-b border-border pb-5">
@@ -120,6 +141,65 @@ export default function Home() {
           Qdrant nie odpowiada: {(collection.error ?? "nieznany błąd").replace(/\.$/, "")}.
           Pokazane wartości pochodzą z ostatniego udanego odczytu i nie są aktualne.
         </p>
+      )}
+
+      <div className="mt-4 flex items-center justify-between">
+        <p className="font-mono text-[11px] text-muted">
+          Reset przydaje się, gdy chcesz zacząć eksperyment na czystym zasobie.
+        </p>
+        <button
+          onClick={() => setWipeState("confirm")}
+          disabled={!collection?.reachable || (collection?.pointsCount ?? 0) === 0}
+          className="rounded border border-border-strong px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest text-muted hover:border-accent hover:text-accent disabled:opacity-30 disabled:hover:border-border-strong disabled:hover:text-muted"
+        >
+          Wyczyść zasób
+        </button>
+      </div>
+
+      {wipeState !== "idle" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+          <div className="w-full max-w-sm rounded border border-border-strong bg-surface-raised p-5">
+            {wipeState === "error" ? (
+              <>
+                <p className="font-mono text-sm text-accent">Nie udało się wyczyścić</p>
+                <p className="mt-2 font-mono text-xs text-muted">{wipeError}</p>
+                <div className="mt-4 flex justify-end">
+                  <button
+                    onClick={() => setWipeState("idle")}
+                    className="rounded border border-border-strong px-4 py-2 font-mono text-xs uppercase tracking-widest hover:border-muted"
+                  >
+                    Zamknij
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="font-mono text-sm">Na pewno?</p>
+                <p className="mt-2 font-mono text-xs text-muted">
+                  Usunie {formatNumber(collection?.pointsCount ?? null)} punktów z kolekcji{" "}
+                  <span className="text-foreground">{collection?.collection}</span>. Nie da się
+                  cofnąć — dokumenty trzeba będzie wgrać ponownie.
+                </p>
+                <div className="mt-4 flex justify-end gap-2">
+                  <button
+                    onClick={() => setWipeState("idle")}
+                    disabled={wipeState === "busy"}
+                    className="rounded border border-border-strong px-4 py-2 font-mono text-xs uppercase tracking-widest hover:border-muted disabled:opacity-40"
+                  >
+                    Anuluj
+                  </button>
+                  <button
+                    onClick={() => void wipeCollection()}
+                    disabled={wipeState === "busy"}
+                    className="rounded border border-accent bg-accent/10 px-4 py-2 font-mono text-xs uppercase tracking-widest text-accent hover:bg-accent/20 disabled:opacity-40"
+                  >
+                    {wipeState === "busy" ? "Czyszczę…" : "Tak, wyczyść"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       )}
 
       <section className="mt-10">

@@ -79,3 +79,39 @@ export async function getPointsCount(): Promise<number | null> {
   const state = await getCollectionState();
   return state.reachable ? state.pointsCount : null;
 }
+
+export type WipeResult = { ok: boolean; pointsBefore: number | null; error?: string };
+
+/**
+ * Kasuje WSZYSTKIE punkty w kolekcji (pusty filtr = brak warunków = pasuje
+ * do każdego punktu). Konfiguracja kolekcji (wymiar, metryka) zostaje bez
+ * zmian — to reset zawartości, nie usunięcie kolekcji. Nieodwracalne.
+ */
+export async function wipeCollection(): Promise<WipeResult> {
+  const before = await getPointsCount();
+  const collection = config.qdrant.collection;
+
+  try {
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (config.qdrant.apiKey) headers["api-key"] = config.qdrant.apiKey;
+
+    const res = await fetch(`${config.qdrant.url}/collections/${collection}/points/delete`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ filter: {} }),
+      signal: AbortSignal.timeout(30_000),
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      return { ok: false, pointsBefore: before, error: `Qdrant odpowiedział ${res.status}: ${text.slice(0, 300)}` };
+    }
+    return { ok: true, pointsBefore: before };
+  } catch (err) {
+    return {
+      ok: false,
+      pointsBefore: before,
+      error: err instanceof Error ? err.message : "Nieznany błąd wywołania Qdranta",
+    };
+  }
+}
