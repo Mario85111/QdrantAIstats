@@ -56,11 +56,20 @@ Wartości `reason`: `no_text` | `unsupported_type` | `pipeline_error`.
 ```json
 {
   "question": "Jakie są terminy wypowiedzenia?",
-  "conversation_id": "e7c1a0f2-..."
+  "conversation_id": "e7c1a0f2-...",
+  "model": "deepseek/deepseek-v4.1-flash"
 }
 ```
 
 `conversation_id` generuje aplikacja i trzyma w arkuszu `conversations`. n8n używa go jako klucza pamięci rozmowy.
+
+`model` to wybór operatora z panelu. W n8n czyta go węzeł modelu wyrażeniem z fallbackiem:
+```
+{{ $('Webhook').first().json.body.model || '~deepseek/deepseek-v4-flash-latest' }}
+```
+Pole jest opcjonalne — jego brak oznacza model domyślny, więc zmiana jest wstecznie zgodna z każdym klientem, który go nie wysyła. Aplikacja zapisuje użyty model w kolumnie `model` arkusza `chat_messages`; bez tego pomiar czasu byłby nieporównywalny.
+
+**Zweryfikowane 2026-09-17:** nieistniejąca nazwa modelu zwraca błąd (dowód, że wartość z requestu jest faktycznie używana), a dwa różne modele dają powtarzalnie różne czasy odpowiedzi (13,1 s vs 5,4 s na tym samym pytaniu i zasobie).
 
 **Odpowiedź 200:**
 
