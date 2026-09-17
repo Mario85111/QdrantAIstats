@@ -4,8 +4,10 @@ Dwa workflow realizujące zaplecze dla [SCOPE.md](../../SCOPE.md). Import: otwó
 
 | plik | rola |
 |---|---|
-| `rag-ingest.json` | przyjmuje plik, ekstrahuje tekst, dzieli na chunki, zapisuje wektory w Qdrancie |
+| `rag-ingest.json` | przyjmuje plik z aplikacji, dzieli na chunki, zapisuje wektory w Qdrancie |
 | `rag-query.json` | przyjmuje pytanie, odpytuje Qdranta, odpowiada przez agenta AI |
+
+Oba oparte na **Default Data Loaderze w trybie binarnym** — ścieżce zweryfikowanej na PDF i DOCX. Wcześniejsza wersja `rag-ingest.json` używała węzła *Extract from File* z osobną gałęzią per typ pliku; została zastąpiona, bo Default Data Loader radzi sobie z tymi samymi formatami bez routingu, a dodatkowo obsługuje DOCX.
 
 Kontrakt obu webhooków (to, na czym opiera się frontend): [`../n8n-contract.md`](../n8n-contract.md).
 
@@ -73,11 +75,13 @@ Każda z tych czterech kosztowała realny czas przy uruchamianiu czatu. Sprawdź
 
 ## 6. Jak to przetestujesz
 
-1. **Ingest, plik TXT.** W `rag-ingest` kliknij `Execute workflow`, wyślij plik `.txt` na adres testowy:
+1. **Ingest, plik TXT.** Workflow musi być zapisany i **aktywny**:
    ```bash
-   curl -F "file=@test.txt" "https://TWOJ-N8N/webhook-test/rag-ingest"
+   curl -F "file=@test.txt" "https://TWOJ-N8N/webhook/rag-ingest"
    ```
-   Oczekiwane: `{"status":"done","chunks":N,...}` i zielona ścieżka na kanwie.
+   Oczekiwane: `{"status":"done","doc_id":"...","chunks":N,"execution_id":"..."}`.
+
+   **Jeśli wróci `done`, ale liczba punktów w Qdrancie nie rośnie** — n8n nazwał właściwość binarną inaczej niż `file`. Otwórz węzeł Webhook → Output → zakładka **Binary**, sprawdź faktyczną nazwę i wpisz ją w **Default Data Loader → Binary Data Field Name**. To jedyne miejsce, gdzie ten workflow zależy od nazwy pola.
 2. **Sprawdź Qdranta niezależnie od n8n** — to samo zapytanie, którego będzie używać aplikacja:
    ```bash
    curl -H "api-key: TWOJ_KLUCZ_QDRANT" "https://TWOJ-VPS:6333/collections/ragdcs"

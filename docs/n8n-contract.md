@@ -7,7 +7,7 @@ Status: **czat zweryfikowany na działającej instancji (2026-09-16), wsad jeszc
 | webhook | stan |
 |---|---|
 | `CHAT_WEBHOOK_URL` | ✅ działa — potwierdzone realnymi requestami: odpowiedź z bazy wiedzy, pamięć rozmowy, brak konfabulacji przy pytaniu spoza zasobu |
-| `INGEST_WEBHOOK_URL` | ⚠️ nie istnieje — wsad w n8n obsługuje obecnie **Form Trigger** (formularz n8n), a nie webhook. Dopóki nie powstanie workflow z węzłem Webhook na ścieżce `rag-ingest`, wsad z poziomu aplikacji nie zadziała. Czat działa niezależnie. |
+| `INGEST_WEBHOOK_URL` | 🟡 workflow gotowy do importu (`docs/n8n/rag-ingest.json`), czeka na wgranie i aktywację przez operatora. Do tego czasu wsad z poziomu aplikacji nie zadziała — czat działa niezależnie. |
 
 ## Wspólne
 
