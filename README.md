@@ -33,7 +33,7 @@ Aplikacja startuje na `http://localhost:3000`. Bez `.env.local` uruchomi się i 
    |---|---|
    | `ingest_jobs` | `id, filename, size_bytes, started_at, finished_at, status, error_message, n8n_execution_id, points_before, points_after` |
    | `conversations` | `id, started_at, title` |
-   | `chat_messages` | `id, conversation_id, role, content, created_at, ttfb_ms, total_ms, error_message` |
+   | `chat_messages` | `id, conversation_id, role, content, created_at, ttfb_ms, total_ms, error_message, model` |
    | `collection_snapshots` | `id, taken_at, points_count, segments_count, status, reachable` |
 
 3. Załóż konto serwisowe w Google Cloud (projekt z włączonym Sheets API) i pobierz plik klucza JSON. Trzymaj go **poza katalogiem projektu**.

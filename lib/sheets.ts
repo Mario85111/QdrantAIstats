@@ -40,6 +40,8 @@ export type ChatMessageRow = {
   ttfbMs: number | null;
   totalMs: number | null;
   errorMessage: string;
+  /** Model, który odpowiadał. Bez tego pomiar czasu jest nieporównywalny. */
+  model: string;
 };
 
 export type ConversationRow = {
@@ -191,6 +193,7 @@ export async function appendChatMessage(row: ChatMessageRow): Promise<SheetsWrit
     row.ttfbMs ?? "",
     row.totalMs ?? "",
     row.errorMessage,
+    row.model,
   ]);
 }
 
@@ -210,6 +213,7 @@ export async function listChatMessages(
       ttfbMs: toNumberOrNull(r[5]),
       totalMs: toNumberOrNull(r[6]),
       errorMessage: r[7] ?? "",
+      model: r[8] ?? "",
     }));
   return { rows: messages, ok, error };
 }
@@ -217,11 +221,15 @@ export async function listChatMessages(
 /** Czasy odpowiedzi asystenta od danego momentu — surowiec pod wykres M-5. */
 export async function listAssistantTimings(
   sinceISO: string
-): Promise<SheetsReadResult<{ createdAt: string; totalMs: number }>> {
+): Promise<SheetsReadResult<{ createdAt: string; totalMs: number; model: string }>> {
   const { rows, ok, error } = await readRows(SHEET_CHAT_MESSAGES);
   const points = rows
     .filter((r) => r[2] === "assistant" && toNumberOrNull(r[6]) !== null)
-    .map((r) => ({ createdAt: stripLeadingApostrophe(r[4]), totalMs: toNumberOrNull(r[6])! }))
+    .map((r) => ({
+      createdAt: stripLeadingApostrophe(r[4]),
+      totalMs: toNumberOrNull(r[6])!,
+      model: r[8] ?? "",
+    }))
     .filter((p) => p.createdAt >= sinceISO);
   return { rows: points, ok, error };
 }

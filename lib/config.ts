@@ -37,6 +37,31 @@ export const config = {
       return required("CHAT_WEBHOOK_URL");
     },
   },
+  chat: {
+    /**
+     * Lista modeli do wyboru w panelu. Aplikacja NIE pobiera jej z API
+     * OpenRoutera celowo — klucz do modelu żyje wyłącznie w n8n
+     * (SCOPE.md, sekcja 6). Lista jest konfiguracją, nie odpytaniem.
+     * Aktualny katalog i ceny: openrouter.ai/models
+     */
+    get models(): string[] {
+      const fromEnv = optional("CHAT_MODELS");
+      if (fromEnv) {
+        return fromEnv
+          .split(",")
+          .map((m) => m.trim())
+          .filter(Boolean);
+      }
+      return [
+        "~deepseek/deepseek-v4-flash-latest",
+        "~deepseek/deepseek-flash-latest",
+        "deepseek/deepseek-v4.1-flash",
+      ];
+    },
+    get defaultModel(): string {
+      return optional("CHAT_MODEL_DEFAULT") ?? this.models[0];
+    },
+  },
   sheets: {
     get spreadsheetId() {
       return optional("GOOGLE_SHEETS_ID");

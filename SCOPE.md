@@ -29,8 +29,9 @@ Given uruchomioną aplikację, when operator przeciągnie plik na pole wsadu, th
 **M-2 | Trwała historia wsadów**
 Given wykonane wcześniej wsady, when operator otworzy aplikację po restarcie, then widzi listę ostatnich 50 wsadów: nazwa pliku, rozmiar, czas rozpoczęcia, czas trwania, status końcowy. Dane przeżywają restart aplikacji i restart maszyny.
 
-**M-3 | Czat z agentem z pomiarem czasu**
-Given działający webhook czatu w n8n, when operator wyśle pytanie, then otrzymuje odpowiedź agenta, a aplikacja zapisuje czas do pierwszego bajtu odpowiedzi i całkowity czas odpowiedzi. Każda wymiana jest zapisana trwale wraz z pomiarem.
+**M-3 | Czat z agentem z pomiarem czasu i wyborem modelu**
+Given działający webhook czatu w n8n, when operator wybierze model z listy i wyśle pytanie, then otrzymuje odpowiedź agenta, a aplikacja zapisuje czas do pierwszego bajtu odpowiedzi, całkowity czas odpowiedzi **oraz użyty model**. Każda wymiana jest zapisana trwale wraz z pomiarem.
+*Model bez pomiaru albo pomiar bez modelu są bezużyteczne do porównań — „18 s" nic nie znaczy, jeśli nie wiadomo, który model tyle zajął. Lista modeli pochodzi z konfiguracji aplikacji, nie z API dostawcy: klucz do modelu pozostaje wyłącznie w n8n (sekcja 6).*
 
 **M-4 | Panel stanu zasobu wektorowego**
 Given dostępny Qdrant, when operator otworzy widok główny, then widzi odczytane bezpośrednio z Qdranta: nazwę kolekcji, liczbę punktów, liczbę segmentów, status kolekcji (`green`/`yellow`/`red`) oraz datę ostatniego udanego wsadu (z M-2). Gdy Qdrant nie odpowiada, panel pokazuje `brak połączenia` z timestampem ostatniego udanego odczytu — nigdy wartości sprzed awarii bez etykiety.
@@ -98,7 +99,7 @@ Pierwszy wiersz każdej zakładki to nagłówki, dokładnie w podanej kolejnośc
 |---|---|
 | `ingest_jobs` | id, filename, size_bytes, started_at, finished_at, status (`pending`/`done`/`error`), error_message, n8n_execution_id, points_before, points_after |
 | `conversations` | id, started_at, title |
-| `chat_messages` | id, conversation_id, role (`user`/`assistant`), content, created_at, ttfb_ms, total_ms, error_message |
+| `chat_messages` | id, conversation_id, role (`user`/`assistant`), content, created_at, ttfb_ms, total_ms, error_message, model |
 | `collection_snapshots` | id, taken_at, points_count, segments_count, status, reachable (`TRUE`/`FALSE`) |
 
 Zasady zapisu:

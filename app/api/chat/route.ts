@@ -13,6 +13,8 @@ export type ChatResponse = {
   message?: string;
   ttfbMs: number;
   totalMs: number;
+  /** Model, który odpowiadał — zapisywany razem z pomiarem, inaczej czas jest nieporównywalny. */
+  model: string;
   measurementSaved: boolean;
   measurementError?: string;
 };
@@ -29,9 +31,15 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const question = typeof body?.question === "string" ? body.question.trim() : "";
 
+  /** Model wybrany w panelu; nieznana wartość spada na domyślny — panel nie dyktuje n8n czegokolwiek. */
+  const requestedModel = typeof body?.model === "string" ? body.model : "";
+  const model = config.chat.models.includes(requestedModel)
+    ? requestedModel
+    : config.chat.defaultModel;
+
   if (!question) {
     return NextResponse.json(
-      { status: "error", message: "Brak pytania", conversationId: "", answer: "", ttfbMs: 0, totalMs: 0, measurementSaved: false } satisfies ChatResponse,
+      { status: "error", message: "Brak pytania", conversationId: "", answer: "", ttfbMs: 0, totalMs: 0, model, measurementSaved: false } satisfies ChatResponse,
       { status: 400 }
     );
   }
@@ -61,6 +69,7 @@ export async function POST(request: Request) {
     ttfbMs: null,
     totalMs: null,
     errorMessage: "",
+    model: "",
   });
 
   let status: "done" | "error" = "error";
@@ -72,7 +81,7 @@ export async function POST(request: Request) {
     const res = await fetch(config.n8n.chatWebhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question, conversation_id: conversationId }),
+      body: JSON.stringify({ question, conversation_id: conversationId, model }),
       signal: AbortSignal.timeout(config.chatTimeoutMs),
     });
 
@@ -130,6 +139,7 @@ export async function POST(request: Request) {
     ttfbMs,
     totalMs,
     errorMessage: message,
+    model,
   });
 
   return NextResponse.json(
@@ -140,6 +150,7 @@ export async function POST(request: Request) {
       message: message || undefined,
       ttfbMs,
       totalMs,
+      model,
       measurementSaved: userMeasurement.written && assistantMeasurement.written,
       measurementError: assistantMeasurement.error ?? userMeasurement.error,
     } satisfies ChatResponse,
