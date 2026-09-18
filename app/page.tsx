@@ -8,6 +8,7 @@ import IngestHistory from "@/components/IngestHistory";
 import Chat from "@/components/Chat";
 import StatsCharts from "@/components/StatsCharts";
 import DocumentList from "@/components/DocumentList";
+import ExportButtons from "@/components/ExportButtons";
 
 type IngestState =
   | { phase: "idle" }
@@ -283,6 +284,7 @@ export default function Home() {
       <section className="mt-14">
         <h2 className="mb-3 font-mono text-xs uppercase tracking-widest text-muted">Statystyki</h2>
         <StatsCharts />
+        <ExportButtons />
       </section>
 
       <footer className="mt-16 border-t border-border pt-4 font-mono text-[11px] leading-relaxed text-muted">

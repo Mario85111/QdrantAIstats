@@ -21,7 +21,7 @@ Druga rola nie powstaje. Aplikacja nasłuchuje wyłącznie na `127.0.0.1` — br
 
 ## 3. ZAKRES (MoSCoW)
 
-### MUST (MVP) — 8 funkcji
+### MUST (MVP) — 9 funkcji
 
 **M-1 | Wsad pliku z jawnym statusem**
 Given uruchomioną aplikację, when operator przeciągnie plik na pole wsadu, then plik trafia POST-em na webhook ingest w n8n, a interfejs pokazuje jeden z trzech stanów: `w toku` / `w zasobie` / `błąd + treść błędu`. Stan `w toku` nigdy nie jest stanem końcowym — po przekroczeniu timeoutu (120 s) przechodzi w `błąd: timeout`.
@@ -50,11 +50,15 @@ Given kolekcję z punktami, when operator kliknie "Wyczyść zasób" i potwierdz
 Given kolekcję z punktami, when operator otworzy widok główny, then widzi listę dokumentów zgrupowaną po nazwie pliku: nazwa, liczba chunków, data wsadu. Przy każdym dokumencie akcja usunięcia, poprzedzona modalem z dokładną liczbą chunków do skasowania. Punkty bez metadanej `filename` (wgrane, zanim workflow ją zapisywał) tworzą osobną grupę „bez nazwy pliku", również usuwalną — inaczej byłaby to pozycja widoczna, ale nie do ruszenia.
 *Qdrant nie zna pojęcia „dokument", zna punkty. Grupowanie dzieje się po stronie aplikacji na podstawie `metadata.filename`.*
 
+**M-9 | Eksport pomiarów do CSV**
+Given skonfigurowany magazyn pomiarów, when operator kliknie eksport wybranego zbioru (czat, wsady, migawki), then pobiera plik CSV z pełną historią tego zbioru. Gdy Sheets nie jest skonfigurowany, interfejs pokazuje komunikat zamiast pobierać plik z treścią błędu w środku.
+*Separator `;` i BOM UTF-8 — wybór podyktowany otwieraniem w polskim Excelu, gdzie `,` jest separatorem dziesiętnym, a brak BOM zamienia polskie znaki w krzaki.*
+
 ### SHOULD (po MVP)
 - Podgląd źródeł (chunków) użytych w ostatniej odpowiedzi agenta.
 - Licznik kosztu zapytań (wymaga ustalenia dostawcy modelu — patrz pytanie 2).
 - Wsad wielu plików naraz z kolejką.
-- Eksport historii pomiarów do CSV.
+- ~~Eksport historii pomiarów do CSV~~ — zrobione, patrz M-9.
 
 ### COULD (backlog)
 - Porównanie dwóch przebiegów eksperymentu obok siebie.

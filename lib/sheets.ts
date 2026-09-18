@@ -218,6 +218,39 @@ export async function listChatMessages(
   return { rows: messages, ok, error };
 }
 
+/** Wszystkie wiadomości, chronologicznie — surowiec pod eksport CSV. */
+export async function listAllChatMessages(): Promise<SheetsReadResult<ChatMessageRow>> {
+  const { rows, ok, error } = await readRows(SHEET_CHAT_MESSAGES);
+  const messages: ChatMessageRow[] = rows.map((r) => ({
+    id: r[0] ?? "",
+    conversationId: r[1] ?? "",
+    role: (r[2] as ChatMessageRow["role"]) ?? "user",
+    content: r[3] ?? "",
+    createdAt: stripLeadingApostrophe(r[4]),
+    ttfbMs: toNumberOrNull(r[5]),
+    totalMs: toNumberOrNull(r[6]),
+    errorMessage: r[7] ?? "",
+    model: r[8] ?? "",
+  }));
+  return { rows: messages, ok, error };
+}
+
+/** Wszystkie migawki kolekcji — surowiec pod eksport CSV. */
+export async function listAllCollectionSnapshots(): Promise<
+  SheetsReadResult<CollectionSnapshotRow>
+> {
+  const { rows, ok, error } = await readRows(SHEET_COLLECTION_SNAPSHOTS);
+  const snapshots: CollectionSnapshotRow[] = rows.map((r) => ({
+    id: r[0] ?? "",
+    takenAt: stripLeadingApostrophe(r[1]),
+    pointsCount: toNumberOrNull(r[2]),
+    segmentsCount: toNumberOrNull(r[3]),
+    status: r[4] ?? null,
+    reachable: r[5] === "TRUE",
+  }));
+  return { rows: snapshots, ok, error };
+}
+
 /** Czasy odpowiedzi asystenta od danego momentu — surowiec pod wykres M-5. */
 export async function listAssistantTimings(
   sinceISO: string
