@@ -21,7 +21,7 @@ Druga rola nie powstaje. Aplikacja nasłuchuje wyłącznie na `127.0.0.1` — br
 
 ## 3. ZAKRES (MoSCoW)
 
-### MUST (MVP) — 7 funkcji
+### MUST (MVP) — 8 funkcji
 
 **M-1 | Wsad pliku z jawnym statusem**
 Given uruchomioną aplikację, when operator przeciągnie plik na pole wsadu, then plik trafia POST-em na webhook ingest w n8n, a interfejs pokazuje jeden z trzech stanów: `w toku` / `w zasobie` / `błąd + treść błędu`. Stan `w toku` nigdy nie jest stanem końcowym — po przekroczeniu timeoutu (120 s) przechodzi w `błąd: timeout`.
@@ -46,6 +46,10 @@ Given uruchomioną aplikację, when minie interwał 15 minut, then aplikacja zap
 Given kolekcję z punktami, when operator kliknie "Wyczyść zasób" i potwierdzi w modalu pokazującym dokładną liczbę punktów do usunięcia, then aplikacja kasuje wszystkie punkty z bieżącej kolekcji (konfiguracja, wymiar wektora — bez zmian) i odświeża panel. Akcja nieodwracalna, bez drugiego potwierdzenia poza modalem — środowisko testowe, dane odtwarzalne ponownym wsadem. Przycisk wyłączony, gdy Qdrant nieosiągalny albo kolekcja pusta.
 *Nie jest to obsługa wielu kolekcji (WON'T #4) — to czyszczenie zawartości jednej, tej samej kolekcji, żeby kolejny eksperyment startował z zerowym punktem odniesienia.*
 
+**M-8 | Lista dokumentów w zasobie i usuwanie pojedynczego dokumentu**
+Given kolekcję z punktami, when operator otworzy widok główny, then widzi listę dokumentów zgrupowaną po nazwie pliku: nazwa, liczba chunków, data wsadu. Przy każdym dokumencie akcja usunięcia, poprzedzona modalem z dokładną liczbą chunków do skasowania. Punkty bez metadanej `filename` (wgrane, zanim workflow ją zapisywał) tworzą osobną grupę „bez nazwy pliku", również usuwalną — inaczej byłaby to pozycja widoczna, ale nie do ruszenia.
+*Qdrant nie zna pojęcia „dokument", zna punkty. Grupowanie dzieje się po stronie aplikacji na podstawie `metadata.filename`.*
+
 ### SHOULD (po MVP)
 - Podgląd źródeł (chunków) użytych w ostatniej odpowiedzi agenta.
 - Licznik kosztu zapytań (wymaga ustalenia dostawcy modelu — patrz pytanie 2).
@@ -54,7 +58,7 @@ Given kolekcję z punktami, when operator kliknie "Wyczyść zasób" i potwierdz
 
 ### COULD (backlog)
 - Porównanie dwóch przebiegów eksperymentu obok siebie.
-- Usuwanie dokumentu z zasobu z poziomu interfejsu.
+- ~~Usuwanie dokumentu z zasobu z poziomu interfejsu~~ — zrobione, patrz M-8.
 - Powiadomienie, gdy wsad się nie powiódł.
 
 ### WON'T + OUT OF SCOPE — agent NIE buduje

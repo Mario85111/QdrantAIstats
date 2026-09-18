@@ -7,6 +7,7 @@ import { formatClock, formatNumber } from "@/lib/format";
 import IngestHistory from "@/components/IngestHistory";
 import Chat from "@/components/Chat";
 import StatsCharts from "@/components/StatsCharts";
+import DocumentList from "@/components/DocumentList";
 
 type IngestState =
   | { phase: "idle" }
@@ -20,6 +21,7 @@ export default function Home() {
   const [elapsed, setElapsed] = useState(0);
   const [dragging, setDragging] = useState(false);
   const [historyKey, setHistoryKey] = useState(0);
+  const [docsKey, setDocsKey] = useState(0);
   const [wipeState, setWipeState] = useState<"idle" | "confirm" | "busy" | "error">("idle");
   const [wipeError, setWipeError] = useState<string | undefined>();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -77,6 +79,7 @@ export default function Home() {
       }
       void refreshCollection();
       setHistoryKey((k) => k + 1);
+      setDocsKey((k) => k + 1);
     },
     [refreshCollection]
   );
@@ -94,6 +97,7 @@ export default function Home() {
       setWipeState("idle");
       void refreshCollection();
       setHistoryKey((k) => k + 1);
+      setDocsKey((k) => k + 1);
     } catch (err) {
       setWipeError(err instanceof Error ? err.message : "Błąd sieci");
       setWipeState("error");
@@ -249,6 +253,19 @@ export default function Home() {
         )}
 
         {ingest.phase === "finished" && <Result result={ingest.result} />}
+
+        <div className="mt-8">
+          <h3 className="mb-3 font-mono text-xs uppercase tracking-widest text-muted">
+            Dokumenty w zasobie
+          </h3>
+          <DocumentList
+            refreshKey={docsKey}
+            onChanged={() => {
+              void refreshCollection();
+              setDocsKey((k) => k + 1);
+            }}
+          />
+        </div>
 
         <div className="mt-8">
           <h3 className="mb-3 font-mono text-xs uppercase tracking-widest text-muted">
